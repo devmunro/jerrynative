@@ -1,32 +1,18 @@
-const path = require("path");
-const { getDefaultConfig } = require("expo/metro-config");
-const { generate } = require("@storybook/react-native/scripts/generate");
+// metro.config.js
+const path = require('path');
+const { getDefaultConfig } = require('expo/metro-config');
+
+const { generate } = require('@storybook/react-native/scripts/generate');
 
 generate({
-  configPath: path.resolve(__dirname, "./.ondevice"),
+  configPath: path.resolve(__dirname, './.storybook'),
 });
 
-const defaultConfig = getDefaultConfig(__dirname);
+/** @type {import('expo/metro-config').MetroConfig} */
+const config = getDefaultConfig(__dirname);
 
-defaultConfig.transformer.unstable_allowRequireContext = true;
+config.transformer.unstable_allowRequireContext = true;
 
-defaultConfig.resolver.resolveRequest = (context, moduleName, platform) => {
-  const defaultResolveResult = context.resolveRequest(
-    context,
-    moduleName,
-    platform
-  );
+config.resolver.sourceExts.push('mjs');
 
-  if (
-    process.env.STORYBOOK_ENABLED !== "true" &&
-    defaultResolveResult?.filePath?.includes?.(".ondevice/")
-  ) {
-    return {
-      type: "empty",
-    };
-  }
-
-  return defaultResolveResult;
-};
-
-module.exports = defaultConfig;
+module.exports = config;
