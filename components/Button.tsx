@@ -1,61 +1,78 @@
-import React from "react";
-import { TouchableOpacity, Text, StyleSheet } from "react-native";
+import React from 'react';
+import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle, DimensionValue } from 'react-native';
 
 interface MyButtonProps {
   onPress: () => void;
   text: string;
-  color?: string;
-  variant?: 'icon' | 'default' | 'long'; 
+  variant?: 'default' | 'icon' | 'full';
+  backgroundColor?: string;
+  textColor?: string;
+  borderRadius?: number;
+  paddingHorizontal?: number;
+  paddingVertical?: number;
+  width?: DimensionValue;
 }
 
-export const MyButton = ({
+interface VariantStyles {
+  [key: string]: ViewStyle;
+}
+
+const MyButton: React.FC<MyButtonProps> = ({
   onPress,
   text,
-  color = "slategray",
-  variant = 'default', 
-}: MyButtonProps) => {
+  variant = 'default',
+  backgroundColor = '#333',
+  textColor = '#fff',
+  borderRadius = 8,
+  paddingHorizontal = 16,
+  paddingVertical = 8,
+  width,
+}) => {
+  const variantStyles: VariantStyles = {
+    default: {
+      width: width ?? 150,
+    },
+    icon: {
+      width: 50,
+      height: 50,
+      paddingHorizontal: 0,
+      paddingVertical: 0,
+      borderRadius: 8,
+    },
+    full: {
+      width: width ?? '100%',
+      minWidth: '100%',
+    },
+  };
+
   return (
     <TouchableOpacity
       style={[
-        styles.container,
-        { backgroundColor: color },
-        variantStyles[variant], 
+        styles.button,
+        variantStyles[variant],
+        {
+          backgroundColor,
+          borderRadius,
+          paddingHorizontal,
+          paddingVertical,
+        },
       ]}
       onPress={onPress}
     >
-      <Text style={styles.text}>{text}</Text>
+      <Text style={[styles.text, { color: textColor }]}>{text}</Text>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
+  button: {
     alignItems: 'center',
     justifyContent: 'center',
-  },
+  } as ViewStyle,
   text: {
-    color: "white",
     fontSize: 16,
-    fontWeight: "bold",
-  },
+    fontWeight: 'bold',
+  } as TextStyle,
 });
 
-const variantStyles = StyleSheet.create({
-  icon: {
-    width: 50,
-    height: 50,
-    
-  },
-  default: {
-    minWidth: 100,
-    maxWidth: 200,
-    paddingHorizontal: 16,
-  },
-  long: {
-    minWidth: 200,
-    paddingHorizontal: 32,
-  },
-});
+export default MyButton;
